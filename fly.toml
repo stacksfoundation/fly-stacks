@@ -1,0 +1,57 @@
+app = "stacks-blockchain" # app name
+# kill_signal = "SIGTERM" # kill signal to send. default is SIGINT
+kill_timeout = 60 #  how long to wait for shutdown
+
+[build]
+    dockerfile = "stacks-blockchain.Dockerfile"
+
+[deploy]
+    strategy = "bluegreen"
+
+[env]
+    LOG_LEVEL = "debug"
+    RAILS_ENV = "production"
+    S3_BUCKET = "my-app-production"
+
+
+[[services]]
+  internal_port = 80
+  protocol = "tcp"
+
+[[services.ports]]
+    handlers = ["http"]
+    port = "80"
+
+[[services.ports]]
+    handlers = ["tls", "http"]
+    port = "443"
+
+[[services]]
+    internal_port = 20443
+    protocol = "tcp"
+
+[[services]]
+    internal_port = 20444
+    protocol = "tcp"
+
+# [[services.tcp_checks]]
+# interval = 180000
+# timeout = 30000
+# grace_period = "15m"
+
+  [[services.http_checks]]
+    interval = 10000
+    grace_period = "5m"
+    method = "get"
+    path = "/status"
+    protocol = "http"
+    timeout = 2000
+    tls_skip_verify = false
+
+[mounts]
+source="stacks-blockchain-data"
+destination="/root/stacks-blockchain/data"
+
+
+# https://fly.io/docs/app-guides/multiple-processes/
+# https://fly.io/docs/getting-started/multi-region-databases/
