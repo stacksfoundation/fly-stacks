@@ -2,18 +2,35 @@
 # https://fly.io/docs/reference/postgres/
 
 
-app = "stacks-blockchain" # app name
+app = "stacks-blockchain-api" # app name
 # kill_signal = "SIGTERM" # kill signal to send. default is SIGINT
 kill_timeout = 60 #  how long to wait for shutdown
 
 [build]
-    dockerfile = "stacks-blockchain.Dockerfile"
+    dockerfile = "stacks-blockchain-api.Dockerfile"
 
 [deploy]
     strategy = "bluegreen"
 
 [env]
-    STACKS_NETWORK="mainnet"
+      PG_HOST = ""
+      PG_PORT = ""
+      PG_DATABASE = ""
+      PG_USER = ""
+      PG_PASSWORD = ""
+      STACKS_CORE_EVENT_PORT= "3700"
+      STACKS_CORE_EVENT_HOST = "0.0.0.0"
+      STACKS_BLOCKCHAIN_API_PORT = "3999"
+      STACKS_BLOCKCHAIN_API_HOST = "0.0.0.0"
+      STACKS_BLOCKCHAIN_API_DB = "pg"
+      STACKS_CORE_RPC_HOST = "localhost"
+      STACKS_CORE_RPC_PORT = "20443"
+      NODE_ENV = "production"
+      GIT_TAG = "master"
+      STACKS_CHAIN_ID = "0x00000001"
+      V2_POX_MIN_AMOUNT_USTX = "90000000260"
+      STACKS_NETWORK = "mainnet"
+      STACKS_EXPORT_EVENTS_FILE = "/root/stacks-blockchain/stacks-node-events.tsv" 
 
 [[services]]
     internal_port = 80
@@ -27,22 +44,6 @@ kill_timeout = 60 #  how long to wait for shutdown
         handlers = ["tls", "http"]
         port = "443"
 
-[[services]]
-    internal_port = 20443
-    protocol = "tcp"
-    [[services.ports]]
-        handlers = ["http"]
-        port = "20443"
-
-[[services]]
-    internal_port = 20444
-    protocol = "tcp"
-
-# [[services.tcp_checks]]
-# interval = 180000
-# timeout = 30000
-# grace_period = "15m"
-
   [[services.http_checks]]
     interval = 10000
     grace_period = "5m"
@@ -53,7 +54,7 @@ kill_timeout = 60 #  how long to wait for shutdown
     tls_skip_verify = false
 
 [mounts]
-source="stacks-blockchain-data"
+source="stacks-blockchain-event-replay"
 destination="/root/stacks-blockchain/data"
 
 
