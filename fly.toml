@@ -8,12 +8,32 @@ kill_timeout = 60 #  how long to wait for shutdown
 
 [build]
     dockerfile = "stacks-blockchain.Dockerfile"
+[build.args]
+    STACKS_BLOCKCHAIN_VERSION = "2.05.0.1.0"
+    STACKS_BLOCKCHAIN_API_VERSION = "2.1.1"
 
 [deploy]
-    strategy = "bluegreen"
+    strategy = "rolling"
 
 [env]
     STACKS_NETWORK="mainnet"
+    STACKS_CORE_EVENT_PORT= "3700"
+    STACKS_CORE_EVENT_HOST = "0.0.0.0"
+    STACKS_BLOCKCHAIN_API_PORT = "3999"
+    STACKS_BLOCKCHAIN_API_HOST = "0.0.0.0"
+    STACKS_BLOCKCHAIN_API_DB = "pg"
+    STACKS_CORE_RPC_HOST = "localhost"
+    STACKS_CORE_RPC_PORT = "20443"
+    NODE_ENV = "production"
+    GIT_TAG = "master"
+    V2_POX_MIN_AMOUNT_USTX = "90000000260"
+    PG_CONNECTION_URI = "$DATABASE_URL"
+    # STACKS_API_ENABLE_FT_METADATA = "1"
+    # STACKS_API_ENABLE_NFT_METADATA = "1"
+    # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"
+    # STACKS_ADDRESS_CACHE_SIZE = "10000"
+    # BNS_IMPORT_DIR = "/bns-data"
+    # STACKS_EXPORT_EVENTS_FILE = "/root/stacks-blockchain/stacks-node-events.tsv" 
 
 [[services]]
     internal_port = 80
@@ -22,10 +42,16 @@ kill_timeout = 60 #  how long to wait for shutdown
     [[services.ports]]
         handlers = ["http"]
         port = "80"
+    [[services.http_checks]]
+        interval = 10000
+        grace_period = "5s"
+        method = "get"
+        path = "/status"
+        protocol = "http"
+        timeout = 2000
+        tls_skip_verify = false
+        [services.http_checks.headers]
 
-    [[services.ports]]
-        handlers = ["tls", "http"]
-        port = "443"
 
 [[services]]
     internal_port = 20443
@@ -33,24 +59,18 @@ kill_timeout = 60 #  how long to wait for shutdown
     [[services.ports]]
         handlers = ["http"]
         port = "20443"
+    [[services.tcp_checks]]
+        interval = 30000
+        timeout = 10000
+        grace_period = "5m"
 
 [[services]]
     internal_port = 20444
     protocol = "tcp"
-
-# [[services.tcp_checks]]
-# interval = 180000
-# timeout = 30000
-# grace_period = "15m"
-
-  [[services.http_checks]]
-    interval = 10000
-    grace_period = "5m"
-    method = "get"
-    path = "/status"
-    protocol = "http"
-    timeout = 2000
-    tls_skip_verify = false
+    [[services.tcp_checks]]
+        interval = 30000
+        timeout = 10000
+        grace_period = "5m"
 
 [mounts]
 source="stacks-blockchain-data"
