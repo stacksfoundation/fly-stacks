@@ -7,7 +7,7 @@ app = "stacks-blockchain" # app name
 kill_timeout = 60 #  how long to wait for shutdown
 
 [build]
-    dockerfile = "stacks-blockchain.Dockerfile"
+    dockerfile = "Dockerfile"
 [build.args]
     STACKS_BLOCKCHAIN_VERSION = "2.05.0.1.0"
     STACKS_BLOCKCHAIN_API_VERSION = "2.1.1"
@@ -17,21 +17,13 @@ kill_timeout = 60 #  how long to wait for shutdown
 
 [env]
     STACKS_NETWORK="mainnet"
-    STACKS_CORE_EVENT_PORT= "3700"
-    STACKS_CORE_EVENT_HOST = "0.0.0.0"
-    STACKS_BLOCKCHAIN_API_PORT = "3999"
-    STACKS_BLOCKCHAIN_API_HOST = "0.0.0.0"
-    STACKS_BLOCKCHAIN_API_DB = "pg"
-    STACKS_CORE_RPC_HOST = "localhost"
-    STACKS_CORE_RPC_PORT = "20443"
-    NODE_ENV = "production"
-    GIT_TAG = "master"
     V2_POX_MIN_AMOUNT_USTX = "90000000260"
+    # # comment some extra env vars that may be desired
     # STACKS_API_ENABLE_FT_METADATA = "1"
     # STACKS_API_ENABLE_NFT_METADATA = "1"
     # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"
     # STACKS_ADDRESS_CACHE_SIZE = "10000"
-    # BNS_IMPORT_DIR = "/bns-data"
+    # BNS_IMPORT_DIR = "/stacks-blockchain/bns-data"
     # STACKS_EXPORT_EVENTS_FILE = "/root/stacks-blockchain/stacks-node-events.tsv" 
 
 [[services]]
@@ -73,7 +65,7 @@ kill_timeout = 60 #  how long to wait for shutdown
 
 [mounts]
 source="stacks-blockchain-data"
-destination="/root/stacks-blockchain/data"
+destination="/stacks-blockchain"
 
 
 # https://fly.io/docs/app-guides/multiple-processes/
