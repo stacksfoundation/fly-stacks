@@ -28,8 +28,7 @@ COPY --from=stacks-blockchain-api-build /app /app
 RUN apk add \
     nginx
 
-RUN mkdir -p /stacks-blockchain/data \
-    && rm -f /app/.env
+RUN mkdir -p /stacks-blockchain/data
 
 COPY configs/nginx.conf /etc/nginx/http.d/default.conf 
 COPY configs/Stacks-*.toml /stacks-blockchain/

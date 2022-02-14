@@ -27,7 +27,6 @@ kill_timeout = 60 #  how long to wait for shutdown
     NODE_ENV = "production"
     GIT_TAG = "master"
     V2_POX_MIN_AMOUNT_USTX = "90000000260"
-    PG_CONNECTION_URI = "$DATABASE_URL"
     # STACKS_API_ENABLE_FT_METADATA = "1"
     # STACKS_API_ENABLE_NFT_METADATA = "1"
     # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"

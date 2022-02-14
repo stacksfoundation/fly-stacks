@@ -35,6 +35,7 @@ echo "Staring Nginx"
 echo "Starting stacks-blockchain-api"
 if [ "${DATABASE_URL}" ]; then
     export PG_CONNECTION_URI="${DATABASE_URL}"
+    sed -i -e 's|^PG_|# PG_|g' /app/.env
     cd /app && node ./lib/index.js > /dev/stdout 2>&1 & 
 else
     echo "Missing DATABASE_URL env var"
