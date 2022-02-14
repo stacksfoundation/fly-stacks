@@ -2,15 +2,15 @@
 set -m
 case $STACKS_NETWORK in
     mainnet)
-        CONFIG=/stacks-blockchain/Stacks-mainnet.toml
+        CONFIG=/etc/stacks-blockchain/Stacks-mainnet.toml
         export STACKS_CHAIN_ID=0x00000001
         ;;
     testnet)
-        CONFIG=/stacks-blockchain/Stacks-testnet.toml
+        CONFIG=/etc/stacks-blockchain/Stacks-testnet.toml
         export STACKS_CHAIN_ID=0x80000000
         ;;
     *)
-        CONFIG=/stacks-blockchain/Stacks-mocknet.toml
+        CONFIG=/etc/stacks-blockchain/Stacks-mocknet.toml
         export STACKS_CHAIN_ID=2147483648
         ;;
 esac

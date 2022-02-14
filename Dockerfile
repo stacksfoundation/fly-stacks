@@ -38,11 +38,14 @@ COPY --from=stacks-blockchain-api-build /app /app
 RUN apk add \
     nginx
 
-RUN mkdir -p /stacks-blockchain/data
+# store data in /stacks-blockchain
+# configs go in /etc/stacks-blockchain
+RUN mkdir -p /stacks-blockchain \
+    mkdir -p /etc/stacks-blockchain
 
 # add nginx proxy so all http traffic goes over port 80
 COPY configs/nginx.conf /etc/nginx/http.d/default.conf 
-COPY configs/Stacks-*.toml /stacks-blockchain/
+COPY configs/Stacks-*.toml /etc/stacks-blockchain/
 COPY scripts/entrypoint.sh /docker-entrypoint.sh
 COPY scripts/setup-bns.sh /setup-bns.sh
 

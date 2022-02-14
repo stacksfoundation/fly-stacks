@@ -1,8 +1,4 @@
-# need to create a postgres instance first
-# https://fly.io/docs/reference/postgres/
-
-
-app = "stacks-blockchain"
+app = ""
 kill_timeout = 60
 
 [build]
@@ -63,9 +59,5 @@ kill_timeout = 60
         grace_period = "5m"
 
 [mounts]
-source="stacks_blockchain_data"
-destination="/stacks-blockchain"
-
-
-# https://fly.io/docs/app-guides/multiple-processes/
-# https://fly.io/docs/getting-started/multi-region-databases/
+    source="stacks_blockchain_data"
+    destination="/stacks-blockchain"
