@@ -1,4 +1,5 @@
 #!/bin/sh
+set -m
 case $STACKS_NETWORK in
     mainnet)
         CONFIG=/stacks-blockchain/Stacks-mainnet.toml

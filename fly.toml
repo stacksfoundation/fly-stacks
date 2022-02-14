@@ -2,9 +2,8 @@
 # https://fly.io/docs/reference/postgres/
 
 
-app = "stacks-blockchain" # app name
-# kill_signal = "SIGTERM" # kill signal to send. default is SIGINT
-kill_timeout = 60 #  how long to wait for shutdown
+app = "stacks-blockchain"
+kill_timeout = 60
 
 [build]
     dockerfile = "Dockerfile"
@@ -64,7 +63,7 @@ kill_timeout = 60 #  how long to wait for shutdown
         grace_period = "5m"
 
 [mounts]
-source="stacks-blockchain-data"
+source="stacks_blockchain_data"
 destination="/stacks-blockchain"
 
 
