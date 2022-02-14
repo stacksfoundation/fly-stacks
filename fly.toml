@@ -8,7 +8,7 @@ kill_timeout = 60
     STACKS_BLOCKCHAIN_API_VERSION = "2.1.1"
 
 [deploy]
-    strategy = "rolling"
+    strategy = "immediate"
 
 [env]
     STACKS_NETWORK="mainnet"
@@ -29,8 +29,8 @@ kill_timeout = 60
         handlers = ["http"]
         port = "80"
     [[services.http_checks]]
-        interval = 10000
-        grace_period = "5s"
+        interval = 30000
+        grace_period = "5m"
         method = "get"
         path = "/status"
         protocol = "http"
