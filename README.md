@@ -25,10 +25,10 @@ $ flyctl volumes create stacks_blockchain_data --size=50 --region=lax --encrypte
 $ flyctl deploy --detach
 ```
 
-This will launch 2 services in fly: a single node postgres instance and a stacks-blockchain (with API) using that DB. \
-The name is randomized by `openssl rand -hex 6`, producing a name like `stacks-blockchain-9dbc4006e43e` - using a common name doesn't seem to be supported (i.e. not `stacks-blockchain`) \
-The command `flyctl deploy --detach` will deploy the stacks blockchain service _without_ waiting for health checks to return. Remove `--detach` from the command to wait on health checks. \
-Finally, to see the logs during the deploy - you can use the web UI, or run `flyctl logs` to monitor the progress.
+- This will launch 2 services in fly: a single node postgres instance and a stacks-blockchain (with API) using that DB.
+- The name is randomized by `openssl rand -hex 6`, producing a name like `stacks-blockchain-9dbc4006e43e` - using a common name doesn't seem to be supported (i.e. not `stacks-blockchain`)
+- The command `flyctl deploy --detach` will deploy the stacks blockchain service _without_ waiting for health checks to return. Remove `--detach` from the command to wait on health checks.
+- Finally, to see the logs during the deploy - you can use the web UI, or run `flyctl logs` to monitor the progress.
 
 ## Notes
 
