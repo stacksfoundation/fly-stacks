@@ -1,5 +1,8 @@
 # Stacks Blockchain on fly.io
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
+
 https://fly.io/docs/hands-on/sign-up/
 
 https://fly.io/docs/getting-started/installing-flyctl/
@@ -34,6 +37,7 @@ $ flyctl deploy --detach
 
 1. It should be trivial to create a standalone docker image here by adding postgres to the Dockerfile and configuring the env var to use that DB vs postgres hosted by https://fly.io
 2. Blockchain sync time with the above VM settings will be a bit slower due to the shared single vcpu. For better performance -> [use a higher resource VM](https://fly.io/docs/about/pricing/)
-3. When the command ``is run, it adds an env var`DATABASE_URL` to the deployment. [entrypoint.sh](scripts/entrypoint.sh#L37) uses this env var to connect to postgres.
+   1. Pricing for a 4GB instance for 1 month is about $30 with a managed DB
+3. When the command `flyctl postgres create` is run, it adds an env var `DATABASE_URL` to the deployment. [entrypoint.sh](scripts/entrypoint.sh#L37) uses this env var to connect to postgres.
 4. The cloned [fly.toml](fly.toml) **will be overwritten** to remove commented lines and replace the app name using the randomized string. [fly.toml.sample](fly.toml.sample) is a copy of this file for reference.
 5. The provided domain by fly isn't currently working, but you can access the services using the ip address (i.e. `http://x.x.x.x/v2/info`)
