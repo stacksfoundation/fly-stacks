@@ -5,7 +5,7 @@ kill_timeout = 60
     dockerfile = "Dockerfile"
 [build.args]
     STACKS_BLOCKCHAIN_VERSION = "2.05.0.1.0"
-    STACKS_BLOCKCHAIN_API_VERSION = "2.1.1"
+    STACKS_BLOCKCHAIN_API_VERSION = "3.0.1"
 
 [deploy]
     strategy = "immediate"
@@ -14,8 +14,8 @@ kill_timeout = 60
     STACKS_NETWORK="mainnet"
     V2_POX_MIN_AMOUNT_USTX = "90000000260"
     # # comment some extra env vars that may be desired
-    # STACKS_API_ENABLE_FT_METADATA = "1"
-    # STACKS_API_ENABLE_NFT_METADATA = "1"
+    STACKS_API_ENABLE_FT_METADATA = "1"
+    STACKS_API_ENABLE_NFT_METADATA = "1"
     # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"
     # STACKS_ADDRESS_CACHE_SIZE = "10000"
     # BNS_IMPORT_DIR = "/stacks-blockchain/bns-data"
