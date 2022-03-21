@@ -42,4 +42,4 @@ else
     exit 2
 fi
 echo "Starting stacks-blockchain"
-/bin/stacks-node start --config=${CONFIG}
+exec /bin/stacks-node start --config=${CONFIG}
