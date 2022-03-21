@@ -1,6 +1,6 @@
 # default versions to use (set to current defaults for 02/2022)
 ARG STACKS_BLOCKCHAIN_VERSION=2.05.0.1.0
-ARG STACKS_BLOCKCHAIN_API_VERSION=2.1.1
+ARG STACKS_BLOCKCHAIN_API_VERSION=3.0.1
 
 FROM blockstack/stacks-blockchain:${STACKS_BLOCKCHAIN_VERSION} as stacks-blockchain-build
 FROM hirosystems/stacks-blockchain-api:${STACKS_BLOCKCHAIN_API_VERSION} as stacks-blockchain-api-build
