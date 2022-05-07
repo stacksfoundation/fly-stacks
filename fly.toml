@@ -1,63 +1,72 @@
-app = ""
-kill_timeout = 60
+app = "stacks-blockchain-3d9f78229768"
+kill_timeout = 1200
+kill_signal = "SIGTERM"
 
 [build]
-    dockerfile = "Dockerfile"
-[build.args]
-    STACKS_BLOCKCHAIN_VERSION = "2.05.0.1.0"
-    STACKS_BLOCKCHAIN_API_VERSION = "3.0.1"
+  dockerfile = "Dockerfile"
 
 [deploy]
-    strategy = "immediate"
+  strategy = "immediate"
 
 [env]
-    STACKS_NETWORK="mainnet"
-    V2_POX_MIN_AMOUNT_USTX = "90000000260"
-    # # comment some extra env vars that may be desired
-    STACKS_API_ENABLE_FT_METADATA = "1"
-    STACKS_API_ENABLE_NFT_METADATA = "1"
-    # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"
-    # STACKS_ADDRESS_CACHE_SIZE = "10000"
-    # BNS_IMPORT_DIR = "/stacks-blockchain/bns-data"
-    # STACKS_EXPORT_EVENTS_FILE = "/root/stacks-blockchain/stacks-node-events.tsv" 
-
-[[services]]
-    internal_port = 80
-    protocol = "tcp"
-
-    [[services.ports]]
-        handlers = ["http"]
-        port = "80"
-    [[services.http_checks]]
-        interval = 30000
-        grace_period = "5m"
-        method = "get"
-        path = "/status"
-        protocol = "http"
-        timeout = 2000
-        tls_skip_verify = false
-        [services.http_checks.headers]
-
-
-[[services]]
-    internal_port = 20443
-    protocol = "tcp"
-    [[services.ports]]
-        handlers = ["http"]
-        port = "20443"
-    [[services.tcp_checks]]
-        interval = 30000
-        timeout = 10000
-        grace_period = "5m"
-
-[[services]]
-    internal_port = 20444
-    protocol = "tcp"
-    [[services.tcp_checks]]
-        interval = 30000
-        timeout = 10000
-        grace_period = "5m"
+  RUST_BACKTRACE = "full"
+  STACKS_LOG_DEBUG = "0"
+  STACKS_NETWORK = "mainnet"
 
 [mounts]
-    source="stacks_blockchain_data"
-    destination="/stacks-blockchain"
+  destination = "/stacks-blockchain"
+  source = "stacks_blockchain_data"
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.http_checks]]
+    grace_period = "5m"
+    interval = 30000
+    method = "get"
+    path = "/status"
+    protocol = "http"
+    timeout = 2000
+    tls_skip_verify = false
+
+    [services.http_checks.headers]
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+[[services]]
+  internal_port = 20443
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = "20443"
+
+  [[services.tcp_checks]]
+    grace_period = "5m"
+    interval = 30000
+    timeout = 10000
+
+[[services]]
+  internal_port = 20444
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = "20443"
+
+  [[services.tcp_checks]]
+    grace_period = "5m"
+    interval = 30000
+    timeout = 10000

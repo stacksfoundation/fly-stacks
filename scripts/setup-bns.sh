@@ -1,51 +1,114 @@
-#!/bin/sh
-# add this to the api sv script if BNS_IMPORT_DIR is defined
-# add a simple file check like $BNS_IMPORT_DIR/imported
-# if file exists, skip. if not, run. 
+#!/usr/bin/env bash
+
+# list of files needed to import BNS names
+BNS_FILES=(
+    chainstate.txt
+    name_zonefiles.txt 
+    subdomain_zonefiles.txt 
+    subdomains.csv
+)
 
 echo ""
 echo "*********************************"
 echo "Setting up BNS Data"
+echo "*********************************"
 echo ""
-echo "  Checking for existing file ${BNS_IMPORT_DIR}/export-data.tar.gz"
-if [ ! -f ${BNS_IMPORT_DIR}/export-data.tar.gz ]; then
-  echo "    - Retrieving V1 BNS data as ${BNS_IMPORT_DIR}/export-data.tar.gz"
-  wget https://storage.googleapis.com/blockstack-v1-migration-data/export-data.tar.gz -O ${BNS_IMPORT_DIR}/export-data.tar.gz
-  if [ $? -ne 0 ]; then
-    echo "      - Failed to download https://storage.googleapis.com/blockstack-v1-migration-data/export-data.tar.gz -> ${BNS_IMPORT_DIR}/export-data.tar.gz"
-    exit 1
-  fi
+TARFILE="${BNS_IMPORT_DIR}/export-data.tar.gz"
+# if tarfile doesn't exist, download it
+if [ ! -f "${TARFILE}" ]; then
+    echo "Retrieving V1 BNS data as ${BNS_IMPORT_DIR}/export-data.tar.gz"
+    wget "https://storage.googleapis.com/blockstack-v1-migration-data/export-data.tar.gz" -O "${TARFILE}"
+    if [ $? -ne 0 ]; then
+        echo "  - Failed to download https://storage.googleapis.com/blockstack-v1-migration-data/export-data.tar.gz -> ${TARFILE}"
+        exit 1
+    fi
+else
+    echo "Found existing tarfile: ${TARFILE}"
 fi
-## Try to extract BNS files individually (faster if we're only missing 1 or 2 of them)
-BNS_FILES="
-  chainstate.txt
-  name_zonefiles.txt 
-  subdomain_zonefiles.txt 
-  subdomains.csv
-"
-for FILE in $BNS_FILES; do
-  if [ ! -f ${BNS_IMPORT_DIR}/$FILE ]; then
-    echo "  Extracting Missing BNS text file: ${BNS_IMPORT_DIR}/$FILE"
-    tar -xzf ${BNS_IMPORT_DIR}/export-data.tar.gz -C ${BNS_IMPORT_DIR}/ ${FILE}
-    if [ $? -ne 0 ]; then
-      echo "    - Failed to extract ${FILE}"
-      exit 1
+
+check_sha256(){
+    local file="${1}" # text file
+    local file_256="${file}.sha256" # text file sha256
+    local file_path="${BNS_IMPORT_DIR}/${file}" # full path to file
+    local file_256_path="${BNS_IMPORT_DIR}/${file_256}" # full path to sha256 file
+    # if both files exist, compare sha1sum
+    if [ -f "${file_path}" -a -f "${file_256_path}" ]; then
+        # retrieve/calculate the sha1sum
+        local sha256=$(cat ${file_256_path})
+        local sha256sum=$(sha256sum ${file_path} | awk {'print $1'})
+        # if sha1sum doesn't match, remove the files and extract them
+        # then, retrty this function 1 more time
+        if [ "${sha256}" != "${sha256sum}" ]; then
+            echo "[ Warning ] - sha256 mismatch"
+            echo "    - Removing ${file} and ${file_256}, re-attempting sha256 verification"
+            rm -f "${file_path}"
+            rm -f "${file_256_path}"
+            counter=$((counter+1))
+            if ! extract_files "${file}"; then
+                # if the files couldn't extract, exit
+                exit 1
+            fi            
+        else
+            # matched the sha1sum, move on to the next file in the list
+            printf "  - %-25s: %-20s Matched sha256 with %s\n" "${file}" "${sha256sum}" "${file_256}" 
+            return 0
+        fi 
+    else
+        # inc counter and try the function again
+        counter=$((counter+1))
+        if ! extract_files "${file}"; then
+            exit 1
+        fi
     fi
-  else
-    echo "  Using Existing BNS text file: ${BNS_IMPORT_DIR}/$FILE"
-  fi
-  if [ ! -f ${BNS_IMPORT_DIR}/${FILE}.sha256 ]; then
-    echo "  Extracting Missing BNS sha256 file: ${BNS_IMPORT_DIR}/${FILE}.sha256"
-    tar -xzf ${BNS_IMPORT_DIR}/export-data.tar.gz -C ${BNS_IMPORT_DIR}/ ${FILE}.sha256
-    if [ $? -ne 0 ]; then
-      echo "    - Failed to extract ${FILE}"
-      exit 2
+    return 1
+}
+
+extract_files() {
+    local file="${1}" # text file
+    local file_256="${file}.sha256" # text file sha256
+    local file_path="${BNS_IMPORT_DIR}/${file}" # full path to file
+    local file_256_path="${BNS_IMPORT_DIR}/${file_256}" # full path to sha256 file
+    if [ "${counter}" -gt "1" ];then
+        # if we've tried extracting more than once (i.e. checked sha2sum 2x already) - exit
+        echo
+        echo "[ Error ] - Failed to verify sha56 of ${file} after 2 attempts"
+        exit 1
     fi
-  else
-    echo "  Using Existing BNS sha256 file: ${BNS_IMPORT_DIR}/$FILE"
-  fi
+    if [ ! -f "${file_256_path}" ]; then
+        # extract the named file
+        echo "Extracting BNS sha256 file: ${file_256_path}"
+        if ! tar -xzf ${TARFILE} -C ${BNS_IMPORT_DIR}/ ${file_256}; then
+            # return non-zero if we can't extract the file
+            echo "  - Failed to extract ${file_256_path}"
+            return 1
+        fi
+    fi
+    if [ ! -f "${file_path}" ]; then
+        # extract the named file's sha256 file
+        echo "Extracting BNS text file: ${file_path}"
+        if ! tar -xzf ${TARFILE} -C ${BNS_IMPORT_DIR}/ ${file}; then
+            # return non-zero if we can't extract the file
+            echo "  - Failed to extract ${file_path}"
+            echo "Exiting"
+            return 1
+        fi
+    fi
+    # if both files were extracted, recheck the sha1sum
+    check_sha256 "${file}"
+    return 0
+}
+
+
+for FILE in ${BNS_FILES[@]}; do
+    counter=0 # reset sha1sum comparison counter to 0 for each file 
+    echo
+    check_sha256 "${FILE}"
 done
-echo "Exiting"
+echo "Setting dir ownership"
+echo "cmd: chown -R ${USER_ID} ${BNS_IMPORT_DIR}"
+chown -R ${USER_ID} ${BNS_IMPORT_DIR}
+echo
+echo "Complete"
 touch  ${BNS_IMPORT_DIR}/imported
 exit 0
 
