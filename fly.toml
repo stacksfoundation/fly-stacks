@@ -1,21 +1,35 @@
-app = "stacks-blockchain-3d9f78229768"
-kill_timeout = 1200
-kill_signal = "SIGTERM"
+app = ""
+kill_timeout = 60
 
 [build]
-  dockerfile = "Dockerfile"
+    dockerfile = "Dockerfile"
+
+[build.args]
+    STACKS_BLOCKCHAIN_VERSION = "2.05.0.2.0"
+    STACKS_BLOCKCHAIN_API_VERSION = "3.0.3"
 
 [deploy]
-  strategy = "immediate"
+    strategy = "immediate"
 
 [env]
-  RUST_BACKTRACE = "full"
-  STACKS_LOG_DEBUG = "0"
-  STACKS_NETWORK = "mainnet"
+    STACKS_NETWORK="mainnet"
+    #
+    ## stacks-blockchain
+    RUST_BACKTRACE="full"
+    STACKS_LOG_DEBUG="0"
+    # STACKS_LOG_JSON=1
+    #
+    ## stacks-blockchain-api
+    # STACKS_API_ENABLE_FT_METADATA = "1"
+    # STACKS_API_ENABLE_NFT_METADATA = "1"
+    # STACKS_API_TOKEN_METADATA_ERROR_MODE = "warning"
+    # STACKS_ADDRESS_CACHE_SIZE = "10000"
+    # BNS_IMPORT_DIR = "/stacks-blockchain/bns-data"
+    # STACKS_EXPORT_EVENTS_FILE = "/stacks-blockchain/stacks-node-events.tsv" 
 
 [mounts]
-  destination = "/stacks-blockchain"
-  source = "stacks_blockchain_data"
+    source="stacks_blockchain_data"
+    destination="/stacks-blockchain"
 
 [[services]]
   internal_port = 8080
