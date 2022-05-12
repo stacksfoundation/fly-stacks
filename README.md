@@ -22,6 +22,7 @@ $ export RAND_STRING=$(openssl rand -hex 6)
 $ export PSQL_NAME="stacks-postgres-${RAND_STRING}"
 $ export APP_NAME="stacks-blockchain-${RAND_STRING}"
 $ cp fly.toml.sample fly.toml
+# note: sed is assumed to be GNU sed, BSD variants might not work as is
 $ sed -i -e "s|app = \"\"|app = \"${APP_NAME}\"|" fly.toml
 $ flyctl postgres create --name=$PSQL_NAME --region=lax  --initial-cluster-size=Development --vm-size=dedicated-cpu-1x --volume-size=50 --initial-cluster-size=1
 $ flyctl launch --no-deploy --dockerfile Dockerfile --copy-config  --region=lax --name=$APP_NAME
