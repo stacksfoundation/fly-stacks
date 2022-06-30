@@ -61,7 +61,7 @@ stacks-postgres-3d9f78229768  	personal	running	36m49s ago
 ```bash
 $ curl -sL https://stacks-blockchain-3d9f78229768.fly.dev/
 {
-  "server_version": "stacks-blockchain-api v3.0.3 (master:cd0c8aef)",
+  "server_version": "stacks-blockchain-api v4.0.4 (master:cd0c8aef)",
   "status": "ready",
   "chain_tip": {
     "block_height": 1026,
@@ -77,7 +77,7 @@ $ curl -sL https://stacks-blockchain-3d9f78229768.fly.dev/v2/info | jq
   "burn_block_height": 667440,
   "stable_pox_consensus": "54a253aed603327559c78ab585fa4997ff19e4f1",
   "stable_burn_block_height": 667433,
-  "server_version": "stacks-node 2.05.0.2.0 (develop:4641001, release build, linux [x86_64])",
+  "server_version": "stacks-node 2.05.0.2.2 (develop:4641001, release build, linux [x86_64])",
   "network_id": 1,
   "parent_network_id": 3652501241,
   "stacks_tip_height": 1055,
