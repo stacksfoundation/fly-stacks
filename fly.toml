@@ -5,8 +5,8 @@ kill_timeout = 60
     dockerfile = "Dockerfile"
 
 [build.args]
-    STACKS_BLOCKCHAIN_VERSION = "2.05.0.2.0"
-    STACKS_BLOCKCHAIN_API_VERSION = "3.0.3"
+    STACKS_BLOCKCHAIN_VERSION = "2.05.0.2.2"
+    STACKS_BLOCKCHAIN_API_VERSION = "4.0.4"
 
 [deploy]
     strategy = "immediate"
