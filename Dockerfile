@@ -1,12 +1,10 @@
 # default versions to use (set to current defaults for 02/2022)
-ARG STACKS_BLOCKCHAIN_VERSION=2.05.0.2.2
-ARG STACKS_BLOCKCHAIN_API_VERSION=4.0.4
+ARG STACKS_BLOCKCHAIN_VERSION=2.1.0.0
+ARG STACKS_BLOCKCHAIN_API_VERSION=7.0.0
 
 FROM blockstack/stacks-blockchain:${STACKS_BLOCKCHAIN_VERSION} as stacks-blockchain-build
-# FROM hirosystems/stacks-blockchain-api:${STACKS_BLOCKCHAIN_API_VERSION} as stacks-blockchain-api-build
 FROM hirosystems/stacks-blockchain-api:${STACKS_BLOCKCHAIN_API_VERSION}
 
-# FROM node:16-alpine
 # set defaults for env vars, allow build args to modify them
 ARG STACKS_NETWORK=mainnet
 ARG NODE_ENV=production
@@ -34,8 +32,6 @@ ENV STACKS_CORE_P2P_PORT=${STACKS_CORE_P2P_PORT}
 ENV V2_POX_MIN_AMOUNT_USTX=${V2_POX_MIN_AMOUNT_USTX}
 
 COPY --from=stacks-blockchain-build /bin/stacks-node /bin
-# COPY --from=stacks-blockchain-build /bin/puppet-chain /bin
-# COPY --from=stacks-blockchain-api-build /app /app
 RUN apk add \
     nginx
 
